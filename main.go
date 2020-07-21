@@ -34,7 +34,12 @@ func main() {
 	h := handler.NewHandler(db, lg.SubLog("HANDLER"))
 	fmt.Println(db, lg, lg.SubLog("kek"))
 	router := mux.NewRouter()
-	router.HandleFunc("/faculty", h.HandleFacultyCreate)
+
+	router.HandleFunc("/faculty", h.HandleFacultyCreate).Methods(http.MethodPost)
+	router.HandleFunc("/faculty", h.HandleFacultyRead).Methods(http.MethodGet)
+	router.HandleFunc("/faculty", h.HandleFacultyUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/faculty", h.HandleFacultyDelete).Methods(http.MethodDelete)
+
 	router.HandleFunc("/products/{id:[0-9]+}", productsHandler).Methods(http.MethodGet)
 	http.Handle("/", router)
 
