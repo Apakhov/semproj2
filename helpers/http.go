@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"semprojdb/logger"
 	"strconv"
+	"time"
 )
 
 func HandleErr(lg *logger.Logger, w http.ResponseWriter, err error) bool {
@@ -39,4 +40,16 @@ func ReadGetString(r *http.Request, name string) (string, bool) {
 		return "", false
 	}
 	return keys[0], true
+}
+
+func ReadGetTime(r *http.Request, name string) (time.Time, bool) {
+	keys, ok := r.URL.Query()[name]
+	if !ok || len(keys[0]) < 1 {
+		return time.Time{}, false
+	}
+	res, err := time.Parse(time.RFC3339, keys[0])
+	if err != nil {
+		return time.Time{}, false
+	}
+	return res, true
 }

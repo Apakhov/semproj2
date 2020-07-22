@@ -9,12 +9,12 @@ import (
 
 type Teacher struct {
 	ID         int64  `json:"id"`
-	ContractID string `json="contract_id"`
-	FirsName   string `json="first_name"`
-	LastName   string `json="last_name"`
-	Email      string `json="email"`
-	CathedraID int64  `json="cathedra_id"`
-	Active     bool   `json="active"`
+	ContractID string `json:"contract_id"`
+	FirsName   string `json:"first_name"`
+	LastName   string `json:"last_name"`
+	Email      string `json:"email"`
+	CathedraID int64  `json:"cathedra_id"`
+	Active     bool   `json:"active"`
 }
 
 func teacherToDB(s *Teacher, d *psql.Teacher) {
@@ -96,9 +96,9 @@ func (h *Handler) HandleTeacherRead(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleTeacherDelete(w http.ResponseWriter, r *http.Request) {
 	id, _ := helpers.ReadGetInt64(r, "id")
-	sh, _ := helpers.ReadGetString(r, "short_name")
-	fl, _ := helpers.ReadGetString(r, "full_name")
-	err := h.db.DelTeacher(id, sh, fl)
+	cid, _ := helpers.ReadGetString(r, "contract_id")
+	email, _ := helpers.ReadGetString(r, "email")
+	err := h.db.DelTeacher(id, cid, email)
 	bt, _ := json.Marshal(WithError{
 		Err: psql.AnalizeDBError(err),
 		Val: nil,

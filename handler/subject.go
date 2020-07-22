@@ -8,11 +8,11 @@ import (
 )
 
 type Subject struct {
-	ID        int64  `json:"id"`
-	ShortName string `json:"short_name"`
-	FullName  string `json:"full_name"`
+	ID         int64  `json:"id"`
+	ShortName  string `json:"short_name"`
+	FullName   string `json:"full_name"`
 	CathedraID int64  `json:"cathedra_id"`
-	IsDeleted bool   `json:"is_deleted"`
+	IsDeleted  bool   `json:"is_deleted"`
 }
 
 func subjectToDB(s *Subject, d *psql.Subject) {
