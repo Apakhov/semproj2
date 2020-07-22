@@ -6,11 +6,11 @@ import (
 )
 
 type Subject struct {
-	ID        int64
-	ShortName string
-	FullName  string
+	ID         int64
+	ShortName  string
+	FullName   string
 	CathedraID int64
-	IsDeleted bool
+	IsDeleted  bool
 }
 
 const sqlSubjectInsert = `
@@ -110,4 +110,3 @@ func (db *DB) GetSubjects(id int64, shName, flName string, fid int64, limit int6
 	}
 	return fs, nil
 }
-
