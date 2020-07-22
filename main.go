@@ -40,6 +40,16 @@ func main() {
 	router.HandleFunc("/faculty", h.HandleFacultyUpdate).Methods(http.MethodPut)
 	router.HandleFunc("/faculty", h.HandleFacultyDelete).Methods(http.MethodDelete)
 
+	router.HandleFunc("/cathedra", h.HandleCathedraCreate).Methods(http.MethodPost)
+	router.HandleFunc("/cathedra", h.HandleCathedraRead).Methods(http.MethodGet)
+	router.HandleFunc("/cathedra", h.HandleCathedraUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/cathedra", h.HandleCathedraDelete).Methods(http.MethodDelete)
+
+	router.HandleFunc("/subject", h.HandleSubjectCreate).Methods(http.MethodPost)
+	router.HandleFunc("/subject", h.HandleSubjectRead).Methods(http.MethodGet)
+	router.HandleFunc("/subject", h.HandleSubjectUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/subject", h.HandleSubjectDelete).Methods(http.MethodDelete)
+
 	router.HandleFunc("/products/{id:[0-9]+}", productsHandler).Methods(http.MethodGet)
 	http.Handle("/", router)
 
