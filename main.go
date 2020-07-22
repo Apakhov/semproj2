@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"semprojdb/db/psql"
 	"semprojdb/handler"
@@ -11,13 +10,6 @@ import (
 
 	"github.com/gorilla/mux"
 )
-
-func productsHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
-	response := fmt.Sprintf("Product %s", id)
-	fmt.Fprint(w, response)
-}
 
 func main() {
 	lg := logger.NewLogger("", "", "log.log", pgx.LogLevelDebug)
@@ -32,7 +24,7 @@ func main() {
 		lg.Fatal(err)
 	}
 	h := handler.NewHandler(db, lg.SubLog("HANDLER"))
-	fmt.Println(db, lg, lg.SubLog("kek"))
+
 	router := mux.NewRouter()
 
 	router.HandleFunc("/faculty", h.HandleFacultyCreate).Methods(http.MethodPost)
@@ -55,9 +47,17 @@ func main() {
 	router.HandleFunc("/teacher", h.HandleTeacherUpdate).Methods(http.MethodPut)
 	router.HandleFunc("/teacher", h.HandleTeacherDelete).Methods(http.MethodDelete)
 
-	router.HandleFunc("/products/{id:[0-9]+}", productsHandler).Methods(http.MethodGet)
-	http.Handle("/", router)
+	router.HandleFunc("/st_group", h.HandleStGroupCreate).Methods(http.MethodPost)
+	router.HandleFunc("/st_group", h.HandleStGroupRead).Methods(http.MethodGet)
+	router.HandleFunc("/st_group", h.HandleStGroupUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/st_group", h.HandleStGroupDelete).Methods(http.MethodDelete)
 
+	router.HandleFunc("/student", h.HandleStudentCreate).Methods(http.MethodPost)
+	router.HandleFunc("/student", h.HandleStudentRead).Methods(http.MethodGet)
+	router.HandleFunc("/student", h.HandleStudentUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/student", h.HandleStudentDelete).Methods(http.MethodDelete)
+
+	http.Handle("/", router)
 	lg.Infof("Server is listening on 8181...")
 	http.ListenAndServe(":8181", nil)
 }
