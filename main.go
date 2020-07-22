@@ -50,6 +50,11 @@ func main() {
 	router.HandleFunc("/subject", h.HandleSubjectUpdate).Methods(http.MethodPut)
 	router.HandleFunc("/subject", h.HandleSubjectDelete).Methods(http.MethodDelete)
 
+	router.HandleFunc("/teacher", h.HandleTeacherCreate).Methods(http.MethodPost)
+	router.HandleFunc("/teacher", h.HandleTeacherRead).Methods(http.MethodGet)
+	router.HandleFunc("/teacher", h.HandleTeacherUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/teacher", h.HandleTeacherDelete).Methods(http.MethodDelete)
+
 	router.HandleFunc("/products/{id:[0-9]+}", productsHandler).Methods(http.MethodGet)
 	http.Handle("/", router)
 
