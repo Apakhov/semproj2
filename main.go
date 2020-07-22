@@ -57,6 +57,10 @@ func main() {
 	router.HandleFunc("/student", h.HandleStudentUpdate).Methods(http.MethodPut)
 	router.HandleFunc("/student", h.HandleStudentDelete).Methods(http.MethodDelete)
 
+	router.HandleFunc("/stgr", h.HandlePutStudentToGroup).Methods(http.MethodPost)
+	router.HandleFunc("/stgr/st", h.HandleGetStudentsFromGroup).Methods(http.MethodGet)
+	router.HandleFunc("/stgr/gr", h.HandleGetGroupsOfStudent).Methods(http.MethodGet)
+
 	http.Handle("/", router)
 	lg.Infof("Server is listening on 8181...")
 	http.ListenAndServe(":8181", nil)
