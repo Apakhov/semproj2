@@ -61,6 +61,31 @@ func main() {
 	router.HandleFunc("/stgr/st", h.HandleGetStudentsFromGroup).Methods(http.MethodGet)
 	router.HandleFunc("/stgr/gr", h.HandleGetGroupsOfStudent).Methods(http.MethodGet)
 
+	router.HandleFunc("/course", h.HandleCourseCreate).Methods(http.MethodPost)
+	router.HandleFunc("/course", h.HandleCourseRead).Methods(http.MethodGet)
+	router.HandleFunc("/course", h.HandleCourseUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/course", h.HandleCourseDelete).Methods(http.MethodDelete)
+
+	router.HandleFunc("/teachercourse", h.HandleAssignTeacherToCourse).Methods(http.MethodPost)
+	router.HandleFunc("/teachercourse", h.HandleUnassignTeacherFromCourse).Methods(http.MethodDelete)
+	router.HandleFunc("/course/teachers", h.HandleGetTeachersFromCourse).Methods(http.MethodGet)
+	router.HandleFunc("/teacher/courses", h.HandleGetCoursesOfTeacher).Methods(http.MethodGet)
+
+	router.HandleFunc("/attendance", h.HandleAttendanceCreate).Methods(http.MethodPost)
+	router.HandleFunc("/attendance", h.HandleAttendanceRead).Methods(http.MethodGet)
+	router.HandleFunc("/attendance", h.HandleAttendanceUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/attendance", h.HandleAttendanceDelete).Methods(http.MethodDelete)
+
+	router.HandleFunc("/mark", h.HandleMarkCreate).Methods(http.MethodPost)
+	router.HandleFunc("/mark", h.HandleMarkRead).Methods(http.MethodGet)
+	router.HandleFunc("/mark", h.HandleMarkUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/mark", h.HandleMarkDelete).Methods(http.MethodDelete)
+
+	router.HandleFunc("/exam", h.HandleExamCreate).Methods(http.MethodPost)
+	router.HandleFunc("/exam", h.HandleExamRead).Methods(http.MethodGet)
+	router.HandleFunc("/exam", h.HandleExamUpdate).Methods(http.MethodPut)
+	router.HandleFunc("/exam", h.HandleExamDelete).Methods(http.MethodDelete)
+
 	http.Handle("/", router)
 	lg.Infof("Server is listening on 8181...")
 	http.ListenAndServe(":8181", nil)
