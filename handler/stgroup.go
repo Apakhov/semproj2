@@ -46,7 +46,7 @@ func (h *Handler) HandleStGroupCreate(w http.ResponseWriter, r *http.Request) {
 	stGroupFromDB(vdb, v)
 	bt, _ := json.Marshal(WithError{
 		Err: psql.AnalizeDBError(err),
-		Val: vdb,
+		Val: v,
 	})
 	w.Write(bt)
 }
@@ -62,7 +62,7 @@ func (h *Handler) HandleStGroupUpdate(w http.ResponseWriter, r *http.Request) {
 	stGroupFromDB(vdb, v)
 	bt, _ := json.Marshal(WithError{
 		Err: psql.AnalizeDBError(err),
-		Val: vdb,
+		Val: v,
 	})
 	w.Write(bt)
 }

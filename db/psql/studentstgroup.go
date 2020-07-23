@@ -4,15 +4,6 @@ import (
 	"semprojdb/queryer"
 )
 
-type StudentGroup struct {
-	ID       int64  // id
-	StudyID  string // study_id
-	FirsName string // first_name
-	LastName string // last_name
-	Email    string // email
-	Active   bool   // active
-}
-
 const sqlStudentToGroup = `
 INSERT INTO student_st_group (student_id, st_group_id) 
 VALUES ($1, $2)`
