@@ -42,7 +42,7 @@ func (h *Handler) HandleSubjectCreate(w http.ResponseWriter, r *http.Request) {
 	subjectFromDB(fdb, f)
 	bt, _ := json.Marshal(WithError{
 		Err: psql.AnalizeDBError(err),
-		Val: fdb,
+		Val: f,
 	})
 	w.Write(bt)
 }
@@ -58,7 +58,7 @@ func (h *Handler) HandleSubjectUpdate(w http.ResponseWriter, r *http.Request) {
 	subjectFromDB(fdb, f)
 	bt, _ := json.Marshal(WithError{
 		Err: psql.AnalizeDBError(err),
-		Val: fdb,
+		Val: f,
 	})
 	w.Write(bt)
 }

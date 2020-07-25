@@ -42,7 +42,7 @@ func (h *Handler) HandleCathedraCreate(w http.ResponseWriter, r *http.Request) {
 	cathedraFromDB(fdb, f)
 	bt, _ := json.Marshal(WithError{
 		Err: psql.AnalizeDBError(err),
-		Val: fdb,
+		Val: f,
 	})
 	w.Write(bt)
 }
@@ -58,7 +58,7 @@ func (h *Handler) HandleCathedraUpdate(w http.ResponseWriter, r *http.Request) {
 	cathedraFromDB(fdb, f)
 	bt, _ := json.Marshal(WithError{
 		Err: psql.AnalizeDBError(err),
-		Val: fdb,
+		Val: f,
 	})
 	w.Write(bt)
 }

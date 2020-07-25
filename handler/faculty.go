@@ -39,7 +39,7 @@ func (h *Handler) HandleFacultyCreate(w http.ResponseWriter, r *http.Request) {
 	facultyFromDB(fdb, f)
 	bt, _ := json.Marshal(WithError{
 		Err: psql.AnalizeDBError(err),
-		Val: fdb,
+		Val: f,
 	})
 	w.Write(bt)
 }
@@ -55,7 +55,7 @@ func (h *Handler) HandleFacultyUpdate(w http.ResponseWriter, r *http.Request) {
 	facultyFromDB(fdb, f)
 	bt, _ := json.Marshal(WithError{
 		Err: psql.AnalizeDBError(err),
-		Val: fdb,
+		Val: f,
 	})
 	w.Write(bt)
 }
