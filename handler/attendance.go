@@ -72,7 +72,7 @@ func (h *Handler) HandleAttendanceRead(w http.ResponseWriter, r *http.Request) {
 	}
 	dateLE, _ := helpers.ReadGetTime(r, "beg_le")
 	dateGE, _ := helpers.ReadGetTime(r, "beg_ge")
-	sID, _ := helpers.ReadGetInt64(r, "subject_id")
+	sID, _ := helpers.ReadGetInt64(r, "student_id")
 	tID, _ := helpers.ReadGetInt64(r, "teacher_id")
 	cID, _ := helpers.ReadGetInt64(r, "course_id")
 

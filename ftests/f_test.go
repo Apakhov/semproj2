@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"semprojdb/ftests/test"
 	"semprojdb/handler"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -144,6 +145,7 @@ func NewTeacher(t *testing.T, cathedraID int64) handler.Teacher {
 		LastName:   test.UStr(),
 		Email:      test.UEmail(),
 		CathedraID: cathedraID,
+		Active:     true,
 	}
 	tc := test.TestCase{
 		Path:      "/teacher",
@@ -165,9 +167,10 @@ func DelTeacher(t *testing.T, v *handler.Teacher) {
 func NewStGroup(t *testing.T, teacherID int64) handler.StGroup {
 	v := handler.StGroup{
 		GroupID:   test.UStr(),
-		BeginD:    time.Now(),
-		EndD:      time.Now().Add(180 * 24 * time.Hour),
+		BeginD:    time.Now().UTC().Truncate(24 * time.Hour),
+		EndD:      time.Now().UTC().Truncate(24 * time.Hour).Add(180 * 24 * time.Hour),
 		TeacherID: teacherID,
+		Active:    true,
 	}
 	tc := test.TestCase{
 		Path:      "/st_group",
@@ -192,6 +195,7 @@ func NewStudent(t *testing.T) handler.Student {
 		FirsName: test.UStr(),
 		LastName: test.UStr(),
 		Email:    test.UEmail(),
+		Active:   true,
 	}
 	tc := test.TestCase{
 		Path:      "/student",
@@ -215,8 +219,8 @@ func NewCourse(t *testing.T, subjectID, stgroupID int64) handler.Course {
 		ShortName: test.UStr(),
 		FullName:  test.UStr(),
 		Semester:  5,
-		BeginD:    time.Now(),
-		EndD:      time.Now().Add(180 * 24 * time.Hour),
+		BeginD:    time.Now().UTC().Truncate(24 * time.Hour),
+		EndD:      time.Now().UTC().Truncate(24 * time.Hour).Add(180 * 24 * time.Hour),
 		SubjectID: subjectID,
 		StGroupID: stgroupID,
 		Active:    true,
@@ -240,7 +244,7 @@ func DelCourse(t *testing.T, v *handler.Course) {
 }
 func NewMark(t *testing.T, StudentID, TeacherID, CourseID int64) handler.Mark {
 	v := handler.Mark{
-		Date:      time.Now(),
+		Date:      time.Now().UTC().Truncate(24 * time.Hour),
 		Points:    2,
 		StudentID: StudentID,
 		TeacherID: TeacherID,
@@ -262,7 +266,7 @@ func NewMark(t *testing.T, StudentID, TeacherID, CourseID int64) handler.Mark {
 }
 func NewAttendance(t *testing.T, StudentID, TeacherID, CourseID int64) handler.Attendance {
 	v := handler.Attendance{
-		Date:      time.Now(),
+		Date:      time.Now().UTC().Truncate(24 * time.Hour),
 		StudentID: StudentID,
 		TeacherID: TeacherID,
 		CourseID:  CourseID,
@@ -283,7 +287,7 @@ func NewAttendance(t *testing.T, StudentID, TeacherID, CourseID int64) handler.A
 }
 func NewExam(t *testing.T, StudentID, TeacherID, CourseID int64) handler.Exam {
 	v := handler.Exam{
-		Date:      time.Now(),
+		Date:      time.Now().UTC().Truncate(24 * time.Hour),
 		Type:      "p",
 		Points:    2,
 		StudentID: StudentID,
@@ -304,60 +308,139 @@ func NewExam(t *testing.T, StudentID, TeacherID, CourseID int64) handler.Exam {
 	tc.Run(t, &v)
 	return v
 }
+func GetAny(t *testing.T, v interface{}, path string, params map[string]string) {
+	tc := test.TestCase{
+		Path:      path,
+		Method:    http.MethodGet,
+		GetParams: params,
+		Response: test.WithError{
+			Err: "",
+			Val: v,
+		},
+	}
+
+	tc.Run(t, &v)
+}
 
 func TestAAA(t *testing.T) {
 	// FACULTY -------------------------------------------------------
 	faculty := NewFaculty(t)
 	faculty.FullName = test.UStr()
 	UpdateAny(t, &faculty, "/faculty")
+	faculties := []handler.Faculty{faculty, NewFaculty(t), NewFaculty(t), NewFaculty(t)}
+	GetAny(t, faculties, "/faculty", map[string]string{
+		"id":    strconv.Itoa(int(faculty.ID)),
+		"limit": strconv.Itoa(len(faculties)),
+	})
 	// FACULTY ^------------------------------------------------------
 
 	// CATHEDRA ------------------------------------------------------
 	cathedra := NewCathedra(t, faculty.ID)
 	cathedra.FullName = test.UStr()
 	UpdateAny(t, &cathedra, "/cathedra")
+	cathedras := []handler.Cathedra{cathedra, NewCathedra(t, faculty.ID), NewCathedra(t, faculty.ID),
+		NewCathedra(t, faculty.ID)}
+	GetAny(t, cathedras, "/cathedra", map[string]string{
+		"id":    strconv.Itoa(int(cathedra.ID)),
+		"limit": strconv.Itoa(len(cathedras)),
+	})
 	// CATHEDRA ^-----------------------------------------------------
 
 	// SUBJECT -------------------------------------------------------
 	subject := NewSubject(t, cathedra.ID)
 	subject.FullName = test.UStr()
 	UpdateAny(t, &subject, "/subject")
+	subjects := []handler.Subject{subject, NewSubject(t, cathedra.ID), NewSubject(t, cathedra.ID), NewSubject(t, cathedra.ID)}
+	GetAny(t, subjects, "/subject", map[string]string{
+		"id":    strconv.Itoa(int(subject.ID)),
+		"limit": strconv.Itoa(len(subjects)),
+	})
 	// SUBJECT ^------------------------------------------------------
 
 	// TEACHER -------------------------------------------------------
 	teacher := NewTeacher(t, cathedra.ID)
 	teacher.FirsName = test.UStr()
 	UpdateAny(t, &teacher, "/teacher")
+	teachers := []handler.Teacher{teacher,
+		NewTeacher(t, cathedra.ID),
+		NewTeacher(t, cathedra.ID),
+		NewTeacher(t, cathedra.ID)}
+	GetAny(t, teachers, "/teacher", map[string]string{
+		"id":    strconv.Itoa(int(teacher.ID)),
+		"limit": strconv.Itoa(len(teachers)),
+	})
 	// TEACHER ^------------------------------------------------------
 
 	// STGROUP -------------------------------------------------------
 	stGroup := NewStGroup(t, teacher.ID)
 	stGroup.GroupID = test.UStr()
 	UpdateAny(t, &stGroup, "/st_group")
+	stGroups := []handler.StGroup{stGroup,
+		NewStGroup(t, teacher.ID),
+		NewStGroup(t, teacher.ID),
+		NewStGroup(t, teacher.ID)}
+	GetAny(t, stGroups, "/st_group", map[string]string{
+		"id":    strconv.Itoa(int(stGroup.ID)),
+		"limit": strconv.Itoa(len(stGroups)),
+	})
 	// STGROUP ^------------------------------------------------------
 
 	// STUDENT -------------------------------------------------------
 	student := NewStudent(t)
 	student.FirsName = test.UStr()
 	UpdateAny(t, &student, "/student")
+	students := []handler.Student{student,
+		NewStudent(t),
+		NewStudent(t),
+		NewStudent(t)}
+	GetAny(t, students, "/student", map[string]string{
+		"id":    strconv.Itoa(int(student.ID)),
+		"limit": strconv.Itoa(len(students)),
+	})
 	// STUDENT ^------------------------------------------------------
 
 	// COURSE --------------------------------------------------------
 	course := NewCourse(t, subject.ID, stGroup.ID)
 	course.FullName = test.UStr()
 	UpdateAny(t, &course, "/course")
+	courses := []handler.Course{course,
+		NewCourse(t, subjects[1].ID, stGroups[1].ID),
+		NewCourse(t, subjects[2].ID, stGroups[2].ID),
+		NewCourse(t, subjects[3].ID, stGroups[3].ID)}
+	GetAny(t, courses, "/course", map[string]string{
+		"id":    strconv.Itoa(int(course.ID)),
+		"limit": strconv.Itoa(len(courses)),
+	})
 	// COURSE ^-------------------------------------------------------
 
 	// MARK ----------------------------------------------------------
 	mark := NewMark(t, student.ID, teacher.ID, course.ID)
 	mark.Points = 3
 	UpdateAny(t, &mark, "/mark")
+	marks := []handler.Mark{mark,
+		NewMark(t, student.ID, teacher.ID, course.ID),
+		NewMark(t, student.ID, teacher.ID, course.ID),
+		NewMark(t, student.ID, teacher.ID, course.ID)}
+	GetAny(t, marks, "/mark", map[string]string{
+		"date_ge":    mark.Date.Format(time.RFC3339),
+		"student_id": strconv.Itoa(int(student.ID)),
+		"limit":      strconv.Itoa(len(marks)),
+	})
 	// MARK ^---------------------------------------------------------
 
 	// ATTENDANCE ----------------------------------------------------
 	attendance := NewAttendance(t, student.ID, teacher.ID, course.ID)
-	attendance.Date = time.Now()
+	attendance.Date = time.Now().UTC().Truncate(24 * time.Hour)
 	UpdateAny(t, &attendance, "/attendance")
+	attendances := []handler.Attendance{attendance,
+		NewAttendance(t, student.ID, teacher.ID, course.ID),
+		NewAttendance(t, student.ID, teacher.ID, course.ID),
+		NewAttendance(t, student.ID, teacher.ID, course.ID)}
+	GetAny(t, attendances, "/attendance", map[string]string{
+		"date_ge":    attendance.Date.Format(time.RFC3339),
+		"student_id": strconv.Itoa(int(student.ID)),
+		"limit":      strconv.Itoa(len(attendances)),
+	})
 	// ATTENDANCE ^---------------------------------------------------
 
 	// EXAM ----------------------------------------------------------
@@ -365,6 +448,15 @@ func TestAAA(t *testing.T) {
 	exam.Type = "np"
 	exam.Points = 1
 	UpdateAny(t, &exam, "/exam")
+	exams := []handler.Exam{exam,
+		NewExam(t, students[0].ID, teachers[1].ID, courses[1].ID),
+		NewExam(t, students[0].ID, teachers[2].ID, courses[2].ID),
+		NewExam(t, students[0].ID, teachers[3].ID, courses[3].ID)}
+	GetAny(t, exams, "/exam", map[string]string{
+		"date_ge":    exam.Date.Format(time.RFC3339),
+		"student_id": strconv.Itoa(int(student.ID)),
+		"limit":      strconv.Itoa(len(exams)),
+	})
 	// EXAM ^---------------------------------------------------------
 }
 

@@ -72,15 +72,19 @@ func (tc *TestCase) Run(t *testing.T, dst interface{}) WithError {
 	mp1 := ToMap(tc.Response)
 	mp2 := ToMap(res)
 
-	(mp1["value"]).(map[string]interface{})["id"] = (mp2["value"]).(map[string]interface{})["id"]
-
+	_, ok := (mp1["value"]).(map[string]interface{})
+	if ok {
+		(mp1["value"]).(map[string]interface{})["id"] = (mp2["value"]).(map[string]interface{})["id"]
+	}
 	fmt.Println(mp1)
 	fmt.Println(mp2)
 
 	diffs := deep.Equal(mp1, mp2)
 	assert.Equal(t, []string(nil), diffs, "bad response")
 	bt, _ := json.Marshal(res.Val)
-	json.Unmarshal(bt, dst)
+	if dst != nil {
+		json.Unmarshal(bt, dst)
+	}
 	return res
 }
 
